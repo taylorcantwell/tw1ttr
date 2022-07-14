@@ -1,0 +1,196 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tweet {
+  id               String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+  content          String
+  userId           String          @map("user_id") @db.Uuid
+  deleted          DateTime?
+  author           User            @relation(fields: [userId], references: [id])
+  replyPermissions ReplyPermission @default(EVERYONE) @map("reply_permissions")
+  retweets         Retweet[]
+  savedTweets      SaveTweet[]
+  tweetComments    TweetComment[]
+  tweetHashTag     TweetHashTag[]
+  tweetLikes       TweetLike[]
+  tweetMedia       TweetMedia[]
+
+  @@map("tweet")
+}
+
+model TweetMedia {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  url       String    @unique
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  tweetId   String    @map("tweet_id") @db.Uuid
+  deleted   DateTime?
+  tweet     Tweet     @relation(fields: [tweetId], references: [id])
+
+  @@map("tweet_media")
+}
+
+model Profile {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  name        String?
+  phoneNumber String?   @map("phone_number")
+  bio         String?
+  bannerUrl   String?   @map("banner_url")
+  avatarUrl   String?   @map("avatar_url")
+  userId      String    @unique @map("user_id") @db.Uuid
+  deleted     DateTime?
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@map("profile")
+}
+
+model User {
+  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username      String         @unique @db.VarChar(15)
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime?      @updatedAt @map("updated_at")
+  email         String?        @unique
+  deleted       DateTime?
+  password      String
+  commentLikes  CommentLike[]
+  followees     Follow[]       @relation("followees")
+  followers     Follow[]       @relation("followers")
+  profile       Profile?
+  retweets      Retweet[]
+  savedTweets   SaveTweet[]
+  tweets        Tweet[]
+  tweetComments TweetComment[]
+  tweetLikes    TweetLike[]
+
+  @@map("user")
+}
+
+model Follow {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  followeeId String    @map("followee_id") @db.Uuid
+  followerId String    @map("follower_id") @db.Uuid
+  deleted    DateTime?
+  unfollowed Boolean?
+  followee   User      @relation("followees", fields: [followeeId], references: [id])
+  follower   User      @relation("followers", fields: [followerId], references: [id])
+
+  @@unique([followeeId, followerId])
+  @@map("follow")
+}
+
+model SaveTweet {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  userId    String    @map("user_id") @db.Uuid
+  tweetId   String    @map("tweet_id") @db.Uuid
+  unsaved   Boolean   @default(false)
+  deleted   DateTime?
+  tweet     Tweet     @relation(fields: [tweetId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@unique([tweetId, userId])
+  @@map("save_tweet")
+}
+
+model Retweet {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  userId      String    @map("user_id") @db.Uuid
+  tweetId     String    @map("tweet_id") @db.Uuid
+  unretweeted Boolean   @default(false)
+  deleted     DateTime?
+  tweet       Tweet     @relation(fields: [tweetId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@unique([tweetId, userId])
+  @@map("retweet")
+}
+
+model TweetLike {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  userId    String    @map("user_id") @db.Uuid
+  tweetId   String    @map("tweet_id") @db.Uuid
+  deleted   DateTime?
+  unliked   Boolean   @default(false)
+  tweet     Tweet     @relation(fields: [tweetId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@unique([tweetId, userId])
+  @@map("tweet_like")
+}
+
+model TweetComment {
+  id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
+  comment          String
+  userId           String        @map("user_id") @db.Uuid
+  tweetId          String        @map("tweet_id") @db.Uuid
+  deleted          DateTime?
+  tweet            Tweet         @relation(fields: [tweetId], references: [id])
+  author           User          @relation(fields: [userId], references: [id])
+  tweetCommentLike CommentLike[]
+
+  @@map("tweet_comment")
+}
+
+model CommentLike {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  userId         String       @map("user_id") @db.Uuid
+  tweetCommentId String       @map("tweet_comment_id") @db.Uuid
+  deleted        DateTime?
+  unliked        Boolean      @default(false)
+  tweetComment   TweetComment @relation(fields: [tweetCommentId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
+
+  @@unique([userId, tweetCommentId])
+  @@map("comment_like")
+}
+
+model HashTag {
+  id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  name         String         @unique
+  deleted      DateTime?
+  tweetHashTag TweetHashTag[]
+
+  @@map("hash_tag")
+}
+
+model TweetHashTag {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  tweetId   String    @map("tweet_id") @db.Uuid
+  hashtagId String    @map("hash_tag_id") @db.Uuid
+  deleted   DateTime?
+  hashtag   HashTag   @relation(fields: [hashtagId], references: [id])
+  tweet     Tweet     @relation(fields: [tweetId], references: [id])
+
+  @@map("tweet_hash_tag")
+}
+
+enum ReplyPermission {
+  EVERYONE
+  FOLLOWERS
+}

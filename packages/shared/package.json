@@ -1,0 +1,18 @@
+{
+  "name": "@twitter-clone/shared",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "@twitter-clone/prisma": "*"
+  },
+  "devDependencies": {
+    "rimraf": "^3.0.2",
+    "typescript": "^4.6.4"
+  },
+  "main": "./dist/index.js",
+  "scripts": {
+    "dev": "yarn build",
+    "prebuild": "rimraf dist",
+    "build": "tsc -p tsconfig.json"
+  }
+}

@@ -1,0 +1,4 @@
+**/*.env
+!config/env/production.example.env
+!config/env/development.example.env
+

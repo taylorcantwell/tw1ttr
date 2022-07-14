@@ -1,0 +1,13 @@
+{
+  "editor.formatOnSave": true,
+  "eslint.workingDirectories": ["apps/nestjs", "apps/remix"],
+  "files.associations": {
+    ".lintstagedrc": "json"
+  },
+  "prettier.prettierPath": "node_modules/prettier",
+  "prettier.requireConfig": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  }
+}

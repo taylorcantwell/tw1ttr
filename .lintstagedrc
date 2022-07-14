@@ -1,0 +1,8 @@
+{
+  "{apps,packages}/**/*.{ts,tsx}": [
+    "eslint"
+  ],
+  "**/*.{js,json,ts,tsx,md}": [
+    "prettier --write"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "extends": "tsconfig/base.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "src/",
+    "incremental": true,
+    "strictBindCallApply": false,
+    "noFallthroughCasesInSwitch": false,
+    "strictPropertyInitialization": false,
+    "paths": {
+      "@modules/*": ["modules/*"],
+      "@guards/*": ["guards/*"],
+      "@decorators/*": ["decorators/*"],
+      "@types/*": ["types/*"]
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "name": "remix",
+  "version": "0.0.1",
+  "private": true,
+  "description": "",
+  "license": "",
+  "sideEffects": false,
+  "scripts": {
+    "lint": "eslint --cache --cache-location ./node_modules/.cache/.eslintcache --ext js,jsx,ts,tsx .",
+    "build": "yarn run build:css && remix build",
+    "build:css": "tailwindcss -m -i ./app/styles/tailwind.css -o ./app/styles/styles.css",
+    "dev": "concurrently \"npm run dev:css\" \"cross-env NODE_ENV=development netlify dev\"",
+    "start": "cross-env NODE_ENV=production netlify dev",
+    "dev:css": "tailwindcss -m -i ./app/styles/tailwind.css -o ./app/styles/styles.css"
+  },
+  "dependencies": {
+    "cross-env": "7.0.3",
+    "@netlify/functions": "1.0.0",
+    "@remix-run/netlify": "1.6.1",
+    "@remix-run/node": "1.6.1",
+    "@remix-run/react": "1.6.1",
+    "@heroicons/react": "1.0.6",
+    "@radix-ui/react-dialog": "0.1.7",
+    "@radix-ui/react-popover": "0.1.6",
+    "@radix-ui/react-toast": "0.1.1",
+    "@remix-validated-form/with-zod": "2.0.1",
+    "@twitter-clone/prisma": "*",
+    "clsx": "1.1.1",
+    "dayjs": "1.11.3",
+    "framer-motion": "6.3.15",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-dropzone": "14.2.1",
+    "react-textarea-autosize": "8.3.4",
+    "react-use": "17.4.0",
+    "react-virtual": "2.10.4",
+    "remix-validated-form": "4.5.0",
+    "tilg": "0.1.1",
+    "tiny-invariant": "1.2.0",
+    "uuidv4": "6.2.13",
+    "zod": "3.17.3"
+  },
+  "devDependencies": {
+    "tsconfig": "*",
+    "@remix-run/dev": "1.6.1",
+    "@types/dropzone": "5.7.4",
+    "@types/react": "18.0.14",
+    "@types/react-dom": "18.0.5",
+    "@types/uuid": "8.3.4",
+    "autoprefixer": "10.4.7",
+    "concurrently": "7.2.2",
+    "eslint": "8.18.0",
+    "postcss": "8.4.14",
+    "tailwindcss": "3.1.4",
+    "typescript": "4.7.4"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}
